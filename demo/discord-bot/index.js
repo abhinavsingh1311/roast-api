@@ -20,29 +20,29 @@ client.once('ready', () => {
 
 client.on('interactionCreate', async (interaction) => {
     if (!interaction.isChatInputCommand()) return;
+
     const command = client.commands.get(interaction.commandName);
+
     if (!command) {
-        console.log(`unknown command: ${interaction.commandName}`);
+        console.log(`Unknown command: ${interaction.commandName}`);
         return;
     }
+
     try {
         await command.execute(interaction);
     }
     catch (ex) {
-        console.log('Command error', ex);
-        if (interaction.deferred || interaction.replied) {
-            await interaction.editReply({
-                content: "Error executing command"
-            });
-        }
-        else {
-            await interaction.reply({
-                content: 'Error executing command',
-                ephemeral: true
-            });
+        console.log('Command error:', ex);
+        try {
+            if (interaction.deferred || interaction.replied) {
+                await interaction.editReply({ content: 'Error executing command' });
+            } else {
+                await interaction.reply({ content: 'Error executing command', flags: 64 });
+            }
+        } catch (replyError) {
+            console.log('Failed to send error reply:', replyError.message);
         }
     }
-
 });
 
 client.login(process.env.DISCORD_TOKEN);

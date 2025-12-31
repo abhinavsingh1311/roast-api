@@ -1,0 +1,50 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model ApiKey {
+  id        String     @id @default(cuid())
+  key       String     @unique
+  name      String
+  email     String
+  appType   AppType    @default(WEBSITE)
+  createdAt DateTime   @default(now())
+  requests  RoastLog[]
+}
+
+model RoastLog {
+  id        String   @id @default(cuid())
+  apiKeyId  String
+  apiKey    ApiKey   @relation(fields: [apiKeyId], references: [id])
+  theme     Theme
+  heat      Int
+  context   Json?
+  createdAt DateTime @default(now())
+}
+
+//enums
+
+enum AppType {
+  WEBSITE
+  DISCORD
+  SLACK
+  MOBILE_APP
+}
+
+enum Theme {
+  CODING
+  GAMING
+  PRODUCTIVITY
+  EDUCATIONAL
+}

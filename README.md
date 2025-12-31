@@ -148,7 +148,7 @@ roast-api/
 
 ## License:
 
-Check ![License](https://img.shields.io/badge/License-MIT-green) for the same. 
+Check ![License](./LICENSE) for the same. 
 
 
 

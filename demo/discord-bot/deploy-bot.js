@@ -1,8 +1,8 @@
 import 'dotenv/config';
 import { REST, Routes } from 'discord.js';
-import { data } from './commands/roast.js';
+import roastCommand from './commands/roast.js';
 
-const commands = [data.toJSON()];
+const commands = [roastCommand.data.toJSON()];
 const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
 (async () => {
     try {

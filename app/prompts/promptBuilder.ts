@@ -1,3 +1,4 @@
+import { Theme } from "../generated/prisma/client";
 import { baseSystemPrompt } from "./templates";
 
 export function buildPrompt(theme: Theme, heat: number, length: number, context: Record<string, string>): string {

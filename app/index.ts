@@ -2,7 +2,8 @@ import { env } from "process";
 import express, { urlencoded } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-import bodyParser from 'body-parser';
+import limiter from "./middleware/rateLimit";
+import validateAuthHeader from "./middleware/auth";
 
 const PORT = env.PORT || 4000;
 const app = express();
@@ -10,15 +11,12 @@ const app = express();
 app.use(express.json())
     .use(cors())
     .use(helmet())
-    .use(bodyParser.urlencoded({
-        extended: true
-    }));
+    .use(limiter)
 
 //get health
-app.get('/', (req, res, next) => {
+app.get('/', (req, res) => {
 
     res.json(`Roasting is an art, why not make it easier to be availed!`);
-    next();
 })
 
 
@@ -29,9 +27,8 @@ app.get(`/health`, (req, res) => {
 
 //get themes 
 
-app.get(`/v1/themes`, (req, res, next) => {
+app.get(`/v1/themes`, (req, res) => {
     res.json(`Themes are as follows:`);
-    next();
 })
 
 // post api-keys
@@ -43,9 +40,8 @@ app.post(`/v1/api-keys`, (req, res) => {
 
 // post roasts
 
-app.post(`/v1/roast`, (req, res, next) => {
+app.post(`/v1/roast`, validateAuthHeader, (req, res) => {
     res.json(`You will see roast here!`);
-    next();
 })
 
 app.listen(PORT, () => console.log(`Server started at port ${PORT}`));

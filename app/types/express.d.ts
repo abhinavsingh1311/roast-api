@@ -1,9 +1,9 @@
-import { ApiKey } from '@prisma/client';
+import { ApiKey } from '../generated/prisma/client';
 
 declare global {
     namespace Express {
         interface Request {
-            apiKey?: ApiKey;
+            apiKey?: ApiKey.id;
         }
     }
 }

@@ -1,5 +1,6 @@
 import OpenAI from 'openai';
 import { baseSystemPrompt, themePrompts } from '../prompts/templates';
+import { prisma } from '../utils/prismaClient';
 const client = new OpenAI();
 
 type Theme = "CODING" | "GAMING" | "PRODUCTIVITY" | "EDUCATIONAL";
@@ -9,6 +10,7 @@ interface RoastRequest {
     heat: number;
     length: number;
     context: Record<string, string>;
+    apiKeyId: string;
 }
 
 function buildPrompt(theme: Theme, heat: number, length: number, context: Record<string, string>): string {
@@ -47,6 +49,7 @@ async function generateRoast(request: RoastRequest): Promise<string | null> {
             temperature: 0.9
         });
 
+        logRoasts(request.apiKeyId, request.theme, request.heat, request.context);
         return response.choices[0].message.content;
     }
     catch (ex) {
@@ -55,5 +58,21 @@ async function generateRoast(request: RoastRequest): Promise<string | null> {
     }
 }
 
-export { generateRoast };
+async function logRoasts(apiKeyId: string, theme: Theme, heat: number, context: Record<string, string>) {
+    try {
+        await prisma.roastLog.create({
+            data: {
+                apiKeyId,
+                theme,
+                heat,
+                context
+            }
+        })
+    }
+    catch (ex) {
+        console.log("Error adding logs to roasts table", ex);
+    }
+
+}
+export { generateRoast, logRoasts };
 export type { RoastRequest };

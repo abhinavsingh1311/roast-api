@@ -10,7 +10,7 @@ router.post('/roasts', validateAuthHeader, async (req, res) => {
         res.status(400).json({ message: "theme and context name is needed!" });
     }
 
-    const roast = await generateRoast({ theme, heat, length, context });
+    const roast = await generateRoast({ theme, heat, length, context, apiKeyId: req.apiKey!.id });
     if (!roast) {
         return res.status(500).json({ message: "Error generating roasts" });
     }

@@ -1,5 +1,6 @@
+import 'dotenv/config';
 import { env } from "process";
-import express, { urlencoded } from 'express';
+import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import limiter from "./middleware/rateLimit";

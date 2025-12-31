@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "nodemon app/index.ts",
+    "dev": "tsx watch app/index.ts",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"

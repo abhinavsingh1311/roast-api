@@ -1,4 +1,4 @@
-import { Response } from "express";
+import { Request, Response } from "express";
 import rateLimit from "express-rate-limit";
 
 const limiter = rateLimit({
@@ -7,7 +7,7 @@ const limiter = rateLimit({
     standardHeaders: 'draft-8',
     legacyHeaders: false,
 
-    handler: (req, res: Response, next) => {
+    handler: (req: Request, res: Response) => {
         res.status(429).json({
             success: false,
             message: "Too many requests, try again later after 30 minutes",

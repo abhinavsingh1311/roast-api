@@ -1,17 +1,58 @@
-// async function createNewRecord(data: any) {
-//     try {
-//         const newRecord = await prisma.ApiKey.create({
-//             data: {
-//                 key: data.key,
-//                 name: data.name,
-//                 email: data.email,
-//                 appType: data.appType,
-//                 createdAt: Date.now(),
-//             }
-//         });
-//         return newRecord;
-//     }
-//     catch (ex) {
-//         console.log('error creating new record:', ex);
-//     }
-// }
+import OpenAI from 'openai';
+import { baseSystemPrompt, themePrompts } from '../prompts/templates';
+const client = new OpenAI();
+
+type Theme = "CODING" | "GAMING" | "PRODUCTIVITY" | "EDUCATIONAL";
+
+export interface RoastRequest {
+    theme: Theme;
+    heat: number;
+    length: number;
+    context: Record<string, string>;
+}
+
+function buildPrompt(theme: Theme, heat: number, length: number, context: Record<string, string>): string {
+    const contextString = Object.entries(context)
+        .map(([k, v]) => `${k}: ${v}`)
+        .join("\n");
+
+    return `${baseSystemPrompt}
+
+CURRENT HEAT LEVEL: ${heat}
+MAX LENGTH: ${length} characters
+
+THEME CONTEXT:
+${themePrompts[theme]}
+
+TARGET INFO:
+${contextString}`;
+}
+
+async function generateRoast(request: RoastRequest): Promise<string | null> {
+    try {
+        const systemPrompt = buildPrompt(
+            request.theme,
+            request.heat,
+            request.length,
+            request.context
+        );
+
+        const response = await client.chat.completions.create({
+            model: 'gpt-5.2',
+            messages: [
+                { role: "system", content: systemPrompt },
+                { role: "user", content: "Generate the roast." }
+            ],
+            max_completion_tokens: 150,
+            temperature: 0.9
+        });
+
+        return response.choices[0].message.content;
+    }
+    catch (ex) {
+        console.log('Open AI Error:', ex);
+        return null;
+    }
+}
+
+export { generateRoast };

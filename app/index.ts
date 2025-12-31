@@ -3,7 +3,8 @@ import express, { urlencoded } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import limiter from "./middleware/rateLimit";
-import validateAuthHeader from "./middleware/auth";
+import apiKeyRouter from './routes/apiKeys';
+import roastRouter from './routes/roasts';
 
 const PORT = env.PORT || 4000;
 const app = express();
@@ -19,29 +20,19 @@ app.get('/', (req, res) => {
     res.json(`Roasting is an art, why not make it easier to be availed!`);
 })
 
-
-
 app.get(`/health`, (req, res) => {
     res.json({ status: "ok", version: "1.0.0" });
 })
 
 //get themes 
-
 app.get(`/v1/themes`, (req, res) => {
     res.json(`Themes are as follows:`);
 })
 
 // post api-keys
-
-app.post(`/v1/api-keys`, (req, res) => {
-    res.json(`API_KEYS here`);
-})
-
+app.use('/v1', apiKeyRouter);
 
 // post roasts
-
-app.post(`/v1/roast`, validateAuthHeader, (req, res) => {
-    res.json(`You will see roast here!`);
-})
+app.use('/v1', roastRouter);
 
 app.listen(PORT, () => console.log(`Server started at port ${PORT}`));

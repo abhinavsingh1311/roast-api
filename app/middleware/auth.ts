@@ -24,7 +24,7 @@ const validateAuthHeader = async (req: Request, res: Response, next: NextFunctio
         }
         const keyrecord = await findApiKey(apiKey);
         if (keyrecord) {
-            req.apiKey = apiKey;
+            req.apiKey = keyrecord;
             next();
         } else {
             return res.status(401).json({ message: 'Invalid API key' });

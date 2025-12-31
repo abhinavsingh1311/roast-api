@@ -40,7 +40,7 @@ async function generateRoast(request: RoastRequest): Promise<string | null> {
         );
 
         const response = await client.chat.completions.create({
-            model: 'gpt-5.2',
+            model: 'gpt-4.1-mini',
             messages: [
                 { role: "system", content: systemPrompt },
                 { role: "user", content: "Generate the roast." }
@@ -49,7 +49,8 @@ async function generateRoast(request: RoastRequest): Promise<string | null> {
             temperature: 0.9
         });
 
-        logRoasts(request.apiKeyId, request.theme, request.heat, request.context);
+        console.log("apikey:", request.apiKeyId);
+        await logRoasts(request.apiKeyId, request.theme, request.heat, request.context);
         return response.choices[0].message.content;
     }
     catch (ex) {

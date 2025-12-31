@@ -5,6 +5,7 @@ import helmet from 'helmet';
 import limiter from "./middleware/rateLimit";
 import apiKeyRouter from './routes/apiKeys';
 import roastRouter from './routes/roasts';
+import themeRouter from './routes/themes';
 
 const PORT = env.PORT || 4000;
 const app = express();
@@ -25,10 +26,7 @@ app.get(`/health`, (req, res) => {
 })
 
 //get themes 
-app.get(`/v1/themes`, (req, res) => {
-    res.json(`Themes are as follows:`);
-})
-
+app.use(`/v1`, themeRouter);
 // post api-keys
 app.use('/v1', apiKeyRouter);
 

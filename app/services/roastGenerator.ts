@@ -4,7 +4,7 @@ const client = new OpenAI();
 
 type Theme = "CODING" | "GAMING" | "PRODUCTIVITY" | "EDUCATIONAL";
 
-export interface RoastRequest {
+interface RoastRequest {
     theme: Theme;
     heat: number;
     length: number;
@@ -56,3 +56,4 @@ async function generateRoast(request: RoastRequest): Promise<string | null> {
 }
 
 export { generateRoast };
+export type { RoastRequest };

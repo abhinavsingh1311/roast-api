@@ -4,10 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "build": "tsc",
     "start": "node dist/index.js",
-    "build": "tsc --omit=dev",
     "dev": "ts-node src/index.ts",
-    "lint": "eslint",
     "postbuild": "prisma generate && prisma migrate deploy"
   },
   "dependencies": {

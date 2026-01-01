@@ -1,6 +1,35 @@
 # Roast as a service
 
-## Provides configurable roasts as an API service for bots, streams, and party apps.
+## What is it?
+[![License: Apache](https://img.shields.io/badge/License-Apache-yellow.svg)](/LICENSE)
+[![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg)](https://www.typescriptlang.org/)
+[![Prisma](https://img.shields.io/badge/Prisma-7.0+-purple.svg)](https://www.prisma.io/)
+
+A configurable AI-powered roast API for Discord bots, streams, educational apps, and productivity tools. Generate witty, personalized burns with adjustable intensity levels.
+
+## Table of Contents
+
+- [Features](#-features)
+- [Use Cases](#-use-cases)
+- [Content rules](#content-rules)
+- [Tech Stack](#️-tech-stack)
+- [Getting Started](#-getting-started)
+- [API Documentation](#-api-documentation)
+- [Configuration](#️-configuration)
+- [Deployment](#-deployment)
+- [Demo](#-demo)
+- [Contributing](#-contributing)
+- [License](#-license)
+
+## Features
+
+- **4 Themed Roast Categories**: Gaming, Coding, Productivity, Educational
+- **Heat Meter (1-5)**: Control roast intensity from grandma-safe to unfiltered
+- **Context-Aware**: Personalize roasts with names, game stats, scores, and more
+- **Safe Defaults**: SFW by default, no slurs or hate speech at any level
+- **Rate Limiting**: Built-in abuse prevention
+- **Self-Service API Keys**: No manual approval needed
 
 ## USECASES:
 
@@ -28,128 +57,214 @@
 - Most responses are set to be randomized to ensure is it not repeated for entirety of list of size n , creating probability to be repeated to 1/n.
 - Use a wide range of vocabulary, it includes `adjectives`, `adverbs` etc.
 
-## ENDPOINTS: 
+## Tech Stack
 
-- Basic implementation: 
-	- GET `/roast/random?length=200`;
-	- POST `/roast/app-type=bots/random?level=3&theme=gaming&gameperformace=2&length=240`;
-- Advanced ( based on the configuration styles): 
-	- DELETE
-	- PUT
-	- PATCH
-- Can also include generic endpoints for : GET `/health` & GET `/meta`
+- **Runtime**: Node.js + TypeScript
+- **Framework**: Express.js
+- **Database**: PostgreSQL
+- **ORM**: Prisma
+- **AI**: OpenAI GPT-4o-mini
+- **Deployment**: Railway
 
-## TECH STACK:
-- Typescript/Node.js + P-SQL 
-- Stack : Express + Prisma + P-SQL + OpenAI SDK
-- Additional features: Rate limiting to prevent abuse
+## Getting Started
 
-## DATA MODELS:
+### Prerequisites
 
-- prisma/schema.prisma
-	- models: `ApiKey`, `RoastLog` 
-	- enums: `AppType`, `Theme`
+- Node.js 18+
+- PostgreSQL database
+- OpenAI API key
 
-- `API` specs: 
-   - POST `/v1/roast`
-	- returns a roast as JSON (main endpoint);
-	- Example:
-      
-      "request" : 
-      ```{
-				"theme":"gaming",
-				"heat":3,
-				"length":200,
-				"context":{
-				   "name":"xX_NoScope_Xx",
-				   "game":"Battlefield VI",
-			           "performance":"0 kills, 15 deaths",
-				   "customPrompt": "They instalock Jett every game"
-				   }
-		}
-        ```
-       "response": 
-       ``` 
-        {
-  				"roast": "0 kills and 15 deaths? xX_NoScope_Xx, the only thing you're carrying is the enemy team's KDA. Maybe try Minecraft—at least the zombies move slower than your reaction time.",
-  				"theme": "gaming",
-  				"heat": 3,
-  				"generatedAt": "2025-01-15T10:30:00Z"
-    	 }
-         ```
-            
-  - GET `/v1/themes`
-	- List of all available themes
-	- Example: 
-      "themes": 
-        ```
-        [
-            { "id": "coding", "description": "Dev/programming roasts", "sampleContext": ["language", "bugType", "stackOverflowVisits"] },
-            { "id": "productivity", "description": "Habit/discipline roasts", "sampleContext": ["screenTime", "tasksMissed", "streakBroken"] },
-            { "id": "gaming", "description": "Gamer performance roasts", "sampleContext": ["game", "performance", "rank"] },
-            { "id": "educational", "description": "Student/learning roasts", "sampleContext": ["subject", "score", "questionsWrong"] }
-        ]
-        ```
+### Installation
 
-  - POST `/v1/api-keys` 
-	- self-service key generation
-	- Example: 
- ```   
-            "request": 
-                    {
-                     "name": "My Discord Bot",
-                     "email": "dev@example.com",
-                     "appType": "discord"
-                     }
-                        
-            "response": 
-                    {
-                     "apiKey": "roast_live_abc123...",
-                     "message": "Store this key securely. It won't be shown again."
-                     }	
+```bash
+# Clone the repository
+git clone https://github.com/abhinavsingh1311/roast-api.git
+cd roast-api
+
+# Install dependencies
+npm install
+
+# Set up environment variables
+cp .env.example .env
+# Edit .env with your credentials
+
+# Run database migrations
+npx prisma migrate dev
+
+# Start development server
+npm run dev
+```
+### Environment Variables
+
+```env
+DATABASE_URL=postgresql://user:password@localhost:5432/roast_db
+OPENAI_API_KEY=sk-your-openai-key
+PORT=4000
 ```
 
-  - GET `/health`
-       - status of the endpoints 
-	- `{"status": "ok", "version": "1.0.0^"}`
+## API Documentation
 
-## AUTH PATTERN
-``` Header-based: `Authorization:Bearer roast_live_abc123...`
-Prefix keys with `roast_live_` for clarity ```
+Base URL: `https://roast-api.up.railway.app`
 
-## Folder structure: 
+### Endpoints
+
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | `/health` | Health check | No |
+| POST | `/v1/api-keys` | Create API key | No |
+| GET | `/v1/themes` | List themes | No |
+| POST | `/v1/roast` | Generate roast | Yes |
+
+### Quick Example
+
+```bash
+# Create API key
+curl -X POST https://roast-api.up.railway.app/v1/api-keys \
+  -H "Content-Type: application/json" \
+  -d '{"name": "My App", "email": "dev@example.com"}'
+
+# Generate roast
+curl -X POST https://roast-api.up.railway.app/v1/roast \
+  -H "Content-Type: application/json" \
+  -H "x-api-key: roast_your_key" \
+  -d '{
+    "theme": "GAMING",
+    "heat": 3,
+    "context": 
+    {
+      "name": "Dave",
+      "game": "Valorant",
+      "performance": "0 kills, 15 deaths"
+    }
+  }'
+```
+### Response
+
+```json
+{
+  "roast": "0 kills and 15 deaths? Dave, the enemy team is using you as a health pack. Maybe try Minecraft—at least the zombies move slower than your reaction time.",
+  "theme": "GAMING",
+  "heat": 3
+}
+```
+
+### Themes
+
+| Theme | Description | Context Fields |
+|-------|-------------|----------------|
+| `CODING` | Dev/programming roasts | language, mistake, experience |
+| `GAMING` | Gamer performance roasts | game, performance, rank |
+| `PRODUCTIVITY` | Habit/discipline roasts | habit, streak, screenTime |
+| `EDUCATIONAL` | Student/learning roasts | subject, score, mistake |
+
+### Heat Levels
+
+| Level | Name | Description |
+|-------|------|-------------|
+| 1 | Grandma Safe | Gentle teasing, almost a compliment |
+| 2 | Office Appropriate | Light burns, no profanity (default) |
+| 3 | Friend Group | Solid roasts, mild profanity okay |
+| 4 | Harsh But Fair | Sharp wit, profanity allowed |
+| 5 | Unfiltered | Brutal honesty, heavy profanity |
+
+## Configuration
+
+### Rate Limits
+
+- 100 requests per 30 minutes per API key
+- Configurable in `src/middleware/rateLimit.ts`
+
+
+## Deployment
+
+### Railway (Recommended)
+
+1. Fork this repository
+2. Create new project on [Railway](https://railway.app)
+3. Connect GitHub repo
+4. Add PostgreSQL database
+5. Set environment variables:
+   - `DATABASE_URL` (auto-set if using Railway Postgres)
+   - `OPENAI_API_KEY`
+6. Deploy
+
+### Manual
+
+```bash
+# Build
+npm run build
+
+# Run migrations
+npx prisma migrate deploy
+
+# Start
+npm start
+```
+
+## Demo
+
+A Discord bot demo is included in `/demo/discord-bot/`.
+
+### Features
+- `/roast` slash command
+- Configurable target, game, performance, and heat
+- Easy Railway deployment
+
+See [demo/discord-bot/README.md](demo/discord-bot/README.md) for setup instructions.
+
+## Project Structure
+
 ```
 roast-api/
+├── app/
+│   ├── routes/          # API endpoints
+│   ├── services/        # Business logic
+│   ├── middleware/      # Auth, rate limiting
+│   ├── prompts/         # AI prompt templates
+│   ├── types/           # TypeScript definitions
+│   └── index.ts         # Entry point
 ├── prisma/
-│   └── schema.prisma
-├── src/
-│   ├── routes/
-│   │   ├── roast.ts
-│   │   ├── themes.ts
-│   │   └── apiKeys.ts
-│   ├── services/
-│   │   └── roastGenerator.ts   # OpenAI logic
-│   ├── middleware/
-│   │   ├── auth.ts
-│   │   └── rateLimit.ts
-│   ├── prompts/
-│   │   └── templates.ts        # Theme-specific system prompts
-│   └── index.ts
-├── docs/                        # Your fake docs page
-└── demo/
-    └── discord-bot/            # Integration demo
+│   └── schema.prisma    # Database schema
+├── demo/
+│   └── discord-bot/     # Integration demo
+├── docs/                # Documentation site
+└── README.md
 ```
 
-## TODO:
-- Define data models for custom roasts (fields/placeholders)
-- DRAFT all custom API endpoints requests/ response
-- Sketch one primary integration ( webpage/ discord bot)
-- Write fake `docs page` text
+## Contributing
 
-## License:
+Contributions are welcome! Please follow these steps:
 
-Check ![License](./LICENSE) for the same. 
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
+### Guidelines
 
+- Follow existing code style
+- Add tests for new features
+- Update documentation as needed
 
+## License
 
+This project is licensed under the Apache License — see the [LICENSE](LICENSE) file for details.
+
+**Disclaimer**: Users are responsible for how roasts are used in their applications. By using this API, you agree that the developer is not liable for misuse.
+
+## Links
+
+- [Live API](https://roast-api.up.railway.app)
+- [Documentation](https://roast-api.up.railway.app/docs)
+- [Discord Bot Demo](demo/discord-bot/)
+
+## Author
+
+**Abhinav Singh**
+
+- GitHub: [@abhinavsingh1311](https://github.com/abhinavsingh1311)
+
+---
+
+<p align="center">Made with in Alberta, Canada</p>

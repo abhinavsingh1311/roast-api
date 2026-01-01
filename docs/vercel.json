@@ -3,6 +3,10 @@
     "outputDirectory": ".",
     "routes": [
         {
+            "src": "/docs.css",
+            "dest": "/docs.css"
+        },
+        {
             "src": "/(.*)",
             "dest": "/index.html"
         }

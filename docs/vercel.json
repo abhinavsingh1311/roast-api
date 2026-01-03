@@ -3,6 +3,10 @@
     "outputDirectory": ".",
     "routes": [
         {
+            "src": "/favicon.ico",
+            "dest": "/favicon.ico"
+        },
+        {
             "src": "/docs.css",
             "dest": "/docs.css"
         },

@@ -267,4 +267,4 @@ This project is licensed under the Apache License — see the [LICENSE](LICENSE)
 
 ---
 
-<p align="center">Made with in Alberta, Canada</p>
+<p align="center">Made in Alberta, Canada</p>
